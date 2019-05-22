@@ -1,30 +1,27 @@
 const field = document.getElementById('field');
 const ball = document.getElementById('ball');
 
+function inRange(x, low, high) {
+  // фиксируем значение х в границах low, high
+  if (x < low) return low;
+  if (x > high) return high;
+  return x;
+}
+
 field.addEventListener('click', (event)=> {
+  const fieldRect = field.getBoundingClientRect();
   const innerFieldCoords = {
-    y: event.clientY - (field.offsetTop + field.clientTop),
-    x: event.clientX - (field.offsetLeft + field.clientLeft),
+    y: event.clientY - (field.offsetTop + fieldRect.top),
+    x: event.clientX - (field.offsetLeft + fieldRect.left),
   }
 
+  const halfBallWidth = ball.clientWidth / 2;
+  const halfBallHeight = ball.clientHeight /2 ;
   const ballCoords = {
-    x: innerFieldCoords.x - ball.offsetWidth/2,
-    y: innerFieldCoords.y - ball.offsetHeight/2
-  }
-
-  if (ballCoords.y < 0) {
-    ballCoords.y = 0;
-  }
-
-  if (ballCoords.x < 0) {
-    ballCoords.x = 0;
-  }
-  if (ballCoords.y + ball.clientHeight > field.clientHeight) {
-    ballCoords.y = field.clientHeight - ball.clientHeight;
-  }
-
-  if (ballCoords.x + ball.clientWidth > field.clientWidth) {
-    ballCoords.x = field.clientWidth - ball.clientWidth;
+    x: inRange(innerFieldCoords.x - halfBallWidth,
+       0, fieldRect.width - halfBallWidth * 3),
+    y: inRange(innerFieldCoords.y - halfBallHeight,
+       0, fieldRect.height - halfBallHeight * 3)
   }
 
   ball.style.top = `${ballCoords.y}px`;
